@@ -25,8 +25,14 @@ describe('Registry', function() {
       };
 
       request(app)
-        .get('/register')
-        .send()
+        .post('/register')
+        .set('Content-Type', 'application/json')
+        .send(microservice)
+        .expect(function(res) {
+            if (!res.body.id) {
+                throw "error";
+            }
+        })
         .expect(201, done);
     });
   });

@@ -17,10 +17,11 @@
   },
   "homepage": "https://github.com/danilofarias/graphery#readme",
   "dependencies": {
+    "body-parser": "^1.15.1",
     "chai": "^3.5.0",
     "express": "^4.13.4",
     "mocha": "^2.4.5",
-    "neo4j-driver": "^1.0.1",
+    "neo4j": "^2.0.0-RC2",
     "supertest": "^1.2.0"
   }
 }

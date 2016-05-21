@@ -1,7 +1,7 @@
-var express = require('express');
-var app = express();
-var RegistryHandler = require('./handlers/RegistryHandler');
-var routes = require('./routes');
+var express = require('express'),
+    app = express(),
+    RegistryHandler = require('./handlers/RegistryHandler'),
+    routes = require('./routes');
 
 var handlers = {
   registry: RegistryHandler,
@@ -16,6 +16,4 @@ function start() {
 }
 
 exports.start = start;
-
-console.log(app);
 exports.app = app;
