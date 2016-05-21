@@ -6,4 +6,4 @@ CREATE (chat)-[:DEPENDS_ON]->(auth)
 CREATE (chat)-[:DEPENDS_ON]->(account)
 CREATE (chat)-[:DEPENDS_ON]->(search)
 CREATE (auth)-[:DEPENDS_ON]->(account)
-
+CREATE CONSTRAINT ON (services:Microservice) ASSERT services.name IS UNIQUE
