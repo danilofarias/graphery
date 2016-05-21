@@ -1,24 +1,45 @@
+var crypto = require('crypto');
+
 module.exports = (function(){
     'use strict'
     var db = require('../db');
     var db = db.db;
     var Handler = function() {};
     Handler.register = function(req, res) {
-        db.cypher({
-            query: 'CREATE (service:Microservice {name: {name}, group: {group}, ip: {ip}, port: {port}})'
-             + 'RETURN id(service) AS id',
-            params: req.body
-        }, function (err, result) {
-            console.log(err);
-            console.log(result);
-            if (err) throw err;
 
-            if (!result[0].id) {
-                console.log('No service created');
-                throw 'No service created';
+        var sha = crypto.createHash('sha256');
+
+        sha.update(req.body.name);
+        sha.update(req.body.group);
+        sha.update(req.body.ip);
+        sha.update(req.body.port);
+
+        var params = req.body;
+        params["hash"] = sha.digest('hex');
+
+        db.cypher({
+            query: 'CREATE (service:Microservice {name: {name}, group: {group}, ip: {ip}, port: {port}, hash: {hash}})'
+             + 'RETURN service',
+            params: params
+        }, function (err, result) {
+
+            if (err) {
+
+                if (err.neo4j.code == "Neo.ClientError.Schema.ConstraintValidationFailed") {
+                    res.status(201).json({ hash: params.hash });
+                    return;
+                }
+                res.status(403).json(err);
+                return;
             }
 
-            res.status(201).json({ id: result[0].id });
+            if (!result[0].service.properties.hash) {
+                console.log('No service created');
+                res.status(500).json(result);
+                return;
+            }
+
+            res.status(201).json({ hash: result[0].service.properties.hash });
         });
     };
     return Handler;

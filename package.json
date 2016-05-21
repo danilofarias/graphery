@@ -19,6 +19,7 @@
   "dependencies": {
     "body-parser": "^1.15.1",
     "chai": "^3.5.0",
+    "crypto": "0.0.3",
     "express": "^4.13.4",
     "mocha": "^2.4.5",
     "neo4j": "^2.0.0-RC2",
