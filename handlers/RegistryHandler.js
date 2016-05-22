@@ -49,6 +49,7 @@ module.exports = (function(){
         var host = request.headers['host'];
         var port = request.headers['port'];
         var hash = request.headers['hash'];
+        var path = request.path;
         var options = {
             port: port || 80,
             host: host
@@ -76,10 +77,12 @@ module.exports = (function(){
             query: 'MATCH (service:Microservice), (dependency: Microservice)'+
             'WHERE service.hash = {hash} AND dependency.ip = {host}'+
             'CREATE UNIQUE (service)-[r:DEPENDS_ON]->(dependency)'+
-            'RETURN r',
+            'CREATE (request:Request {from: id(service), to: id(dependency), endpoint: path })'+
+            'RETURN dependency, service',
             params: {
                 hash: hash,
-                host: host
+                host: host,
+                path, path
             }
         }, function (err, result) {
 
