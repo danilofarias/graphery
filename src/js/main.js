@@ -111,50 +111,16 @@ var services = [
 
 console.log(services);
 
-var width = 960,
-    height = 500;
+var output = {
+    "nodes": [{
+        "id": "chat"
+    }, {
+        "id": "auth"
+    }],
+    "links": [{
+        "source": "chat",
+        "target": "auth"
+    }]
+}
 
-var force = d3.layout.force()
-    .charge(-200)
-    .linkDistance(80)
-    .size([width, height]);
-
-var svg = d3.select(".graph-container").append("svg")
-    .attr("width", width)
-    .attr("height", height);
-
-d3.json("./data/test.json", function(error, graph) {
-    if (error) throw error;
-
-    console.log(graph[0].b.properties.name + " depends on: " + graph[0].services);
-    console.log(graph[1].b.properties.name + " depends on: " + graph[1].services);
-    console.log(graph[2].b.properties.name + " depends on: " + graph[2].services);
-
-    force
-        .nodes(graph)
-        .links(graph)
-        .start();
-
-    var link = svg.selectAll(".link")
-        .data(graph.links)
-        .enter().append("line")
-        .attr("class", "link");
-
-    var node = svg.selectAll(".node")
-        .data(graph)
-        .enter().append("circle")
-        .attr("class", "node")
-        .attr("r", 12)
-        .style("fill", function(d) { return d.id; })
-        .call(force.drag);
-
-    force.on("tick", function() {
-        link.attr("x1", function(d) { return d.source.x; })
-            .attr("y1", function(d) { return d.source.y; })
-            .attr("x2", function(d) { return d.target.x; })
-            .attr("y2", function(d) { return d.target.y; });
-
-        node.attr("cx", function(d) { return d.x; })
-            .attr("cy", function(d) { return d.y; });
-    });
-});
+console.log(output);

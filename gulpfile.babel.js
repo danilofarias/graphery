@@ -7,8 +7,8 @@ import autoprefixer     from 'gulp-autoprefixer';
 import sourcemaps       from 'gulp-sourcemaps';
 import imagemin         from 'gulp-imagemin';
 import minify           from 'gulp-minify-css';
-import concat           from 'gulp-concat';
 import uglify           from 'gulp-uglify'
+import babel            from 'gulp-babel';
 
 
 // Sass
@@ -31,15 +31,13 @@ gulp.task('images', (tmp) => {
 
 
 // Javascripts
-gulp.task('scripts', function() {
+gulp.task('scripts', () => {
     gulp.src(['src/js/**/*.js'])
-        // Bundle 
-        .pipe(concat('bundle.js'))
-        // Catch errors
+        .pipe(sourcemaps.init())
+        .pipe(babel())
         .on('error', gutil.log)
-        // Compress
         .pipe(uglify())
-        // De
+        .pipe(sourcemaps.write('.'))
         .pipe(gulp.dest('./public/js'))
 });
 

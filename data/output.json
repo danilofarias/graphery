@@ -1,0 +1,9 @@
+{
+  "nodes": [
+    {"id": "chat"},
+    {"id": "auth"}
+  ],
+  "links": [
+    {"source": "chat", "target": "auth"},
+  ]
+}
