@@ -77,17 +77,18 @@ module.exports = (function(){
             query: 'MATCH (service:Microservice), (dependency: Microservice)'+
             'WHERE service.hash = {hash} AND dependency.ip = {host}'+
             'CREATE UNIQUE (service)-[r:DEPENDS_ON]->(dependency)'+
-            'CREATE (request:Request {from: id(service), to: id(dependency), endpoint: path })'+
+            'CREATE (request:Request {from: id(service), to: id(dependency), endpoint: {path} })'+
             'RETURN dependency, service',
             params: {
                 hash: hash,
                 host: host,
-                path, path
+                path: path
             }
         }, function (err, result) {
 
             if (err) {
 
+                console.log(err);
                 if (err.neo4j.code == "Neo.ClientError.Schema.ConstraintValidationFailed") {
                     response.status(201).json({ hash: params.hash });
                     return;
