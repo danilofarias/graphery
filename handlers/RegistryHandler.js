@@ -1,20 +1,21 @@
 var crypto = require('crypto');
+var http = require('http');
 
 module.exports = (function(){
     'use strict'
     var db = require('../db');
     var db = db.db;
     var Handler = function() {};
-    Handler.register = function(req, res) {
+    Handler.register = function(request, response) {
 
         var sha = crypto.createHash('sha256');
 
-        sha.update(req.body.name);
-        sha.update(req.body.group);
-        sha.update(req.body.ip);
-        sha.update(req.body.port);
+        sha.update(request.body.name);
+        sha.update(request.body.group);
+        sha.update(request.body.ip);
+        sha.update(request.body.port);
 
-        var params = req.body;
+        var params = request.body;
         params["hash"] = sha.digest('hex');
 
         db.cypher({
@@ -26,21 +27,48 @@ module.exports = (function(){
             if (err) {
 
                 if (err.neo4j.code == "Neo.ClientError.Schema.ConstraintValidationFailed") {
-                    res.status(201).json({ hash: params.hash });
+                    response.status(201).json({ hash: params.hash });
                     return;
                 }
-                res.status(403).json(err);
+                response.status(403).json(err);
                 return;
             }
 
             if (!result[0].service.properties.hash) {
                 console.log('No service created');
-                res.status(500).json(result);
+                response.status(500).json(result);
                 return;
             }
 
-            res.status(201).json({ hash: result[0].service.properties.hash });
+            response.status(201).json({ hash: result[0].service.properties.hash });
         });
     };
+
+    Handler.proxy = function(request, response){
+
+        var options = {
+            port: request.headers['port'] || 80,
+            host: request.headers['host']
+        };
+
+        var proxy_request = http.request(options, function(res) {
+            res.setEncoding('utf8');
+            res.on('data', function(chunk) {
+                response.write(chunk);
+            });
+            res.on('end', function() {
+                response.end();
+            });
+        });
+
+        request.on('data', function(chunk) {
+            proxy_request.write(chunk, 'binary');
+        });
+
+        request.on('end', function() {
+            proxy_request.end();
+        });
+    };
+
     return Handler;
 })();
