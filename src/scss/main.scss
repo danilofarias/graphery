@@ -1,4 +1,8 @@
 //  General
+body, * {
+    font-family: 'Open Sans', sans-serif;
+}
+
 body {
     background: #eeeeee;
     padding-top: 50px;
@@ -6,7 +10,7 @@ body {
 
 h1 {
     text-align: center;
-    color: #909;
+    color: #282828;
     margin-bottom: 20px;
 }
 
@@ -16,16 +20,17 @@ h1 {
     background-color: #373a3c;
 }
 .navbar-dark a {
-    color: #9d9d9d;
+    color: #e3e3e3;
+    text-shadow: none;
 }
 .navbar-dark a:hover {
-    color: #909;
+    color: #fff;
 }
 .navbar-dark .navbar-toggle {
     border-color: #eee;
 }
 .navbar-dark .navbar-toggle:hover {
-    background-color: #909;
+    background-color: #282828;
 }
 .navbar-dark .navbar-toggle .icon-bar {
     background-color: #eee;
@@ -49,6 +54,13 @@ h1 {
     width: 100%;
     background: #fff;
     border-radius: 2px;
+    margin: 0 auto 40px;
+}
+
+.gnode text {
+    font-weight: 700;
+    font-size: 18px;
+    color: #383838;
 }
 
 .node {
