@@ -46,9 +46,12 @@ module.exports = (function(){
 
     Handler.proxy = function(request, response){
 
+        var host = request.headers['host'];
+        var port = request.headers['port'];
+        var hash = request.headers['hash'];
         var options = {
-            port: request.headers['port'] || 80,
-            host: request.headers['host']
+            port: port || 80,
+            host: host
         };
 
         var proxy_request = http.request(options, function(res) {
@@ -67,6 +70,28 @@ module.exports = (function(){
 
         request.on('end', function() {
             proxy_request.end();
+        });
+
+        db.cypher({
+            query: 'MATCH (service:Microservice), (dependency: Microservice)'+
+            'WHERE service.hash = {hash} AND dependency.ip = {host}'+
+            'CREATE UNIQUE (service)-[r:DEPENDS_ON]->(dependency)'+
+            'RETURN r',
+            params: {
+                hash: hash,
+                host: host
+            }
+        }, function (err, result) {
+
+            if (err) {
+
+                if (err.neo4j.code == "Neo.ClientError.Schema.ConstraintValidationFailed") {
+                    response.status(201).json({ hash: params.hash });
+                    return;
+                }
+                response.status(403).json(err);
+                return;
+            }
         });
     };
 
