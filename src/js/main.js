@@ -10,7 +10,7 @@ var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height);
 
-d3.json("data/services.json", function(error, services) {
+d3.json("/info", function(error, services) {
   if (error) throw error;
 
   var tmpnodes = [];
