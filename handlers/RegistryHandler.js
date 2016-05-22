@@ -70,5 +70,17 @@ module.exports = (function(){
         });
     };
 
+    Handler.info = function (request, response) {
+        db.cypher({
+            query: 'MATCH (services:Microservice)-[r]->(b) RETURN *'
+        }, function (err, result) {
+            if (err) {
+                response.status(403).json(err);
+                return;
+            }
+            response.status(200).json(result[0]);
+        });
+    }
+
     return Handler;
 })();
