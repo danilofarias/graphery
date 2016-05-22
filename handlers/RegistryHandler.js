@@ -78,13 +78,25 @@ module.exports = (function(){
             'WHERE service.hash = {hash} AND dependency.ip = {host}'+
             'CREATE UNIQUE (service)-[r:DEPENDS_ON]->(dependency)'+
             'CREATE (request:Request {from: id(service), to: id(dependency), endpoint: {path} })'+
-            'RETURN dependency, service',
+            'RETURN dependency, service, r',
             params: {
                 hash: hash,
                 host: host,
                 path: path
             }
         }, function (err, result) {
+
+            var incr = result[0].r.properties.increment || 0;
+
+            db.cypher({
+                query: "MATCH ()-[r:DEPENDS_ON]->() WHERE id(r) = {id} SET r.increment = {increment} RETURN r",
+                params: {
+                    id: result[0].r._id,
+                    increment: incr + 1
+                }
+            }, function(e,r){
+                console.log(e,r);
+            });
 
             if (err) {
 
